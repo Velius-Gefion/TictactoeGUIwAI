@@ -14,7 +14,6 @@ public class Logic
         this.gui = gui;
     }
     
-    
     void turn()
     {
         firstTurn = rnd.nextBoolean();
@@ -90,21 +89,6 @@ public class Logic
                     break;
             }
         }
-        
-        for(j = 0;j < 9; j++)
-        {
-            gui.check[j] = gui.button[j].getText().matches("");
-            if(gui.check[j] == false)
-            {  
-                k += 1;
-                if (k == 9)
-                {
-                    JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
-                    clear();   
-                }
-            }    
-        }
-        k = 0;
     }
 
     void score()
@@ -134,5 +118,19 @@ public class Logic
             gui.button[i].setEnabled(true);
         }
         turn();
+    }
+    
+    protected boolean isGameFinished()
+    {
+        for (int j = 0; j < 9; j++)
+        {
+            if (gui.button[j].isEnabled())
+            {
+                return false;
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
+        clear();
+        return true;
     }
 }
