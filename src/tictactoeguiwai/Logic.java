@@ -96,7 +96,7 @@ public class Logic
     {
         if (p1Check == true && computerCheck == false)
         {
-            JOptionPane.showMessageDialog(null, gui.p1Label.getText().substring(0,8) + " won",
+            JOptionPane.showMessageDialog(null, gui.p1Label.getText().substring(0,6) + " won",
                     "Announcement", JOptionPane.PLAIN_MESSAGE);
             gui.p1Score += 1;
             gui.p1ScoreLabel.setText("Score: " + gui.p1Score);

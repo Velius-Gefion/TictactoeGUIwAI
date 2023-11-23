@@ -70,7 +70,7 @@ public class GUI extends JPanel implements ActionListener
             if (e.getSource() == button[i])
             {
                 button[i].setFont(buttonFont);
-                if(p1Label.getText().substring(12).matches("X"))
+                if(p1Label.getText().substring(10).matches("X"))
                 {
                     button[i].setText("X");
                     turnLabel.setText("O's Turn");
