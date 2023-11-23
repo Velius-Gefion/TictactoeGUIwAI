@@ -65,23 +65,24 @@ public class GUI extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {   
-        for (i = 0; i < 9; i++) {
-            if (e.getSource() == button[i]) {
+        for (i = 0; i < 9; i++)
+        {
+            if (e.getSource() == button[i])
+            {
                 button[i].setFont(buttonFont);
-                if (logic.firstTurn == true) {
+                if(p1Label.getText().substring(12).matches("X"))
+                {
                     button[i].setText("X");
                     turnLabel.setText("O's Turn");
-                } else {
+                }
+                else
+                {
                     button[i].setText("O");
                     turnLabel.setText("X's Turn");
                 }
                 button[i].setEnabled(false);
                 logic.winCondition();
-
-                if (!logic.isGameFinished()) {
-                    logic.computerMove();
-                    logic.winCondition();
-                }
+                logic.aiTurn();
                 break;
             }
         }

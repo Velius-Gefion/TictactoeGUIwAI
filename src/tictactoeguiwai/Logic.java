@@ -14,28 +14,29 @@ public class Logic
         this.gui = gui;
     }
     
-    void turn()
-    {
+    void turn() {
         firstTurn = rnd.nextBoolean();
-        if(firstTurn == true)
-        {
-            gui.p1Label.setText("Player 1 is X");
+        if (firstTurn == true) {
+            gui.p1Label.setText("Player is X");
             gui.computerLabel.setText("Computer is O");
-        }
-        else
-        {
-            gui.p1Label.setText("Player 1 is O");
+        } else {
+            gui.p1Label.setText("Player is O");
             gui.computerLabel.setText("Computer is X");
         }
-        
+
         firstTurn = rnd.nextBoolean();
-        if(firstTurn == true)
+        if (firstTurn == true)
         {
             gui.turnLabel.setText("X's Turn");
         }
         else
         {
             gui.turnLabel.setText("O's Turn");
+        }
+        
+        if(gui.computerLabel.getText().substring(12).matches(gui.turnLabel.getText().substring(0,0)))
+        {
+            aiTurn();
         }
     }
     
@@ -120,6 +121,19 @@ public class Logic
         turn();
     }
     
+    void aiTurn() {
+        int emptyButtonIndex;
+        do {
+            emptyButtonIndex = rnd.nextInt(9);
+        } while (!gui.button[emptyButtonIndex].getText().isEmpty());
+
+        gui.button[emptyButtonIndex].setFont(gui.buttonFont);
+        gui.button[emptyButtonIndex].setText(gui.computerLabel.getText().substring(12));
+        gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
+        gui.button[emptyButtonIndex].setEnabled(false);
+        winCondition();
+    }
+    
     protected boolean isGameFinished()
     {
         for (int j = 0; j < 9; j++)
@@ -132,5 +146,36 @@ public class Logic
         JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
         clear();
         return true;
+    }
+    
+    protected void computerMove()
+    {
+        int bestScore = Integer.MIN_VALUE;
+        int bestMove = -1;
+
+        for (int move = 0; move < 9; move++)
+        {
+            if (gui.button[move].isEnabled())
+            {
+                gui.button[move].setText("O");
+                int score = minimax(0, false);
+                gui.button[move].setText("");
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    bestMove = move;
+                }
+            }
+        }
+
+        gui.button[bestMove].setText("O");
+        gui.button[bestMove].setFont(gui.buttonFont);
+        gui.button[bestMove].setEnabled(false);
+        gui.turnLabel.setText("X's Turn");
+    }
+
+    private int minimax(int i, boolean b)
+    {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
