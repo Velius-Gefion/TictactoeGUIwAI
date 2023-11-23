@@ -4,11 +4,17 @@ import javax.swing.JOptionPane;
 
 public class Logic
 {
-    GUI gui = new GUI();
+    GUI gui;
     Random rnd = new Random();
     
     boolean firstTurn, p1Check, computerCheck;
     int i, j, k;
+
+    public Logic(GUI gui) {
+        this.gui = gui;
+    }
+    
+    
     void turn()
     {
         firstTurn = rnd.nextBoolean();
