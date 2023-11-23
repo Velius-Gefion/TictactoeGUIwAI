@@ -14,10 +14,10 @@ public class GUI extends JFrame implements ActionListener
     Font buttonFont = new Font(null,Font.PLAIN,50), 
          labelFont = new Font(null,Font.PLAIN,15);
     JPanel panel;
-    JLabel p1Label, p2Label, p1ScoreLabel, p2ScoreLabel, turnLabel;
+    JLabel p1Label, computerLabel, p1ScoreLabel, computerScoreLabel, turnLabel;
     JToggleButton[] button = new JToggleButton[9];
     boolean[] check = new boolean[9];
-    int i, j, k, x, y, p1Score, p2Score;
+    int i, j, k, x, y, p1Score, computerScore;
     
     
     GUI()
@@ -36,12 +36,12 @@ public class GUI extends JFrame implements ActionListener
         p1Label.setBounds(10,10,100,15);
         p1ScoreLabel.setBounds(230,10,100,15);
         
-        panel.add(p2Label = new JLabel("Computer"));
-        panel.add(p2ScoreLabel = new JLabel("Score: "));
-        p2Label.setFont(labelFont);
-        p2ScoreLabel.setFont(labelFont);
-        p2Label.setBounds(10,35,100,15);
-        p2ScoreLabel.setBounds(230,35,100,15);
+        panel.add(computerLabel = new JLabel("Computer"));
+        panel.add(computerScoreLabel = new JLabel("Score: "));
+        computerLabel.setFont(labelFont);
+        computerScoreLabel.setFont(labelFont);
+        computerLabel.setBounds(10,35,100,15);
+        computerScoreLabel.setBounds(230,35,100,15);
         
         panel.add(turnLabel = new JLabel("  Turn"));
         turnLabel.setFont(labelFont);

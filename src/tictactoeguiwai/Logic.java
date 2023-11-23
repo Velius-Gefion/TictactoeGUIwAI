@@ -7,7 +7,7 @@ public class Logic
     GUI gui = new GUI();
     Random rnd = new Random();
     
-    boolean firstTurn, p1Check, p2Check;
+    boolean firstTurn, p1Check, computerCheck;
     int i, j, k;
     void turn()
     {
@@ -15,12 +15,12 @@ public class Logic
         if(firstTurn == true)
         {
             gui.p1Label.setText("Player 1 is X");
-            gui.p2Label.setText("Computer is O");
+            gui.computerLabel.setText("Computer is O");
         }
         else
         {
             gui.p1Label.setText("Player 1 is O");
-            gui.p2Label.setText("Computer is X");
+            gui.computerLabel.setText("Computer is X");
         }
         
         firstTurn = rnd.nextBoolean();
@@ -72,12 +72,12 @@ public class Logic
             {
                 case "XXX":
                     p1Check = gui.p1Label.getText().contains("X");
-                    p2Check = gui.p2Label.getText().contains("X");
+                    computerCheck = gui.computerLabel.getText().contains("X");
                     score(); clear();
                     break;
                 case "OOO":
                     p1Check = gui.p1Label.getText().contains("O");
-                    p2Check = gui.p2Label.getText().contains("O");
+                    computerCheck = gui.computerLabel.getText().contains("O");
                     score(); clear();
                     break;
                 default:
@@ -103,7 +103,7 @@ public class Logic
 
     void score()
     {
-        if (p1Check == true && p2Check == false)
+        if (p1Check == true && computerCheck == false)
         {
             JOptionPane.showMessageDialog(null, gui.p1Label.getText().substring(0,8) + " won",
                     "Announcement", JOptionPane.PLAIN_MESSAGE);
@@ -112,10 +112,10 @@ public class Logic
         }
         else
         {
-            JOptionPane.showMessageDialog(null, gui.p2Label.getText().substring(0,8) + " won", 
+            JOptionPane.showMessageDialog(null, gui.computerLabel.getText().substring(0,8) + " won", 
                     "Announcement", JOptionPane.PLAIN_MESSAGE);
-            gui.p2Score += 1;
-            gui.p2ScoreLabel.setText("Score: " + gui.p2Score);
+            gui.computerScore += 1;
+            gui.computerScoreLabel.setText("Score: " + gui.computerScore);
         }
     }
     
