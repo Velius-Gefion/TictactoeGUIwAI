@@ -1,0 +1,132 @@
+package tictactoeguiwai;
+import java.util.Random;
+import javax.swing.JOptionPane;
+
+public class Logic
+{
+    GUI gui = new GUI();
+    Random rnd = new Random();
+    
+    boolean firstTurn, p1Check, p2Check;
+    int i, j, k;
+    void turn()
+    {
+        firstTurn = rnd.nextBoolean();
+        if(firstTurn == true)
+        {
+            gui.p1Label.setText("Player 1 is X");
+            gui.p2Label.setText("Computer is O");
+        }
+        else
+        {
+            gui.p1Label.setText("Player 1 is O");
+            gui.p2Label.setText("Computer is X");
+        }
+        
+        firstTurn = rnd.nextBoolean();
+        if(firstTurn == true)
+        {
+            gui.turnLabel.setText("X's Turn");
+        }
+        else
+        {
+            gui.turnLabel.setText("O's Turn");
+        }
+    }
+    
+    void winCondition()
+    {
+        firstTurn = !firstTurn;
+        String condition = null;
+        for (i = 0; i < 10;i++)
+        {
+            switch(i)
+            {
+                case 0:
+                    condition = gui.button[0].getText() + gui.button[1].getText() + gui.button[2].getText();
+                    break;
+                case 1:
+                    condition = gui.button[3].getText() + gui.button[4].getText() + gui.button[5].getText();
+                    break;
+                case 2:
+                    condition = gui.button[6].getText() + gui.button[7].getText() + gui.button[8].getText();
+                    break;
+                case 3:
+                    condition = gui.button[0].getText() + gui.button[3].getText() + gui.button[6].getText();
+                    break;
+                case 4:
+                    condition = gui.button[1].getText() + gui.button[4].getText() + gui.button[7].getText();
+                    break;
+                case 5:
+                    condition = gui.button[2].getText() + gui.button[5].getText() + gui.button[8].getText();
+                    break;
+                case 6:
+                    condition = gui.button[0].getText() + gui.button[4].getText() + gui.button[8].getText();
+                    break;
+                case 7:
+                    condition = gui.button[6].getText() + gui.button[4].getText() + gui.button[2].getText();
+                    break;
+            }
+            
+            switch(condition)
+            {
+                case "XXX":
+                    p1Check = gui.p1Label.getText().contains("X");
+                    p2Check = gui.p2Label.getText().contains("X");
+                    score(); clear();
+                    break;
+                case "OOO":
+                    p1Check = gui.p1Label.getText().contains("O");
+                    p2Check = gui.p2Label.getText().contains("O");
+                    score(); clear();
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        for(j = 0;j < 9; j++)
+        {
+            gui.check[j] = gui.button[j].getText().matches("");
+            if(gui.check[j] == false)
+            {  
+                k += 1;
+                if (k == 9)
+                {
+                    JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
+                    clear();   
+                }
+            }    
+        }
+        k = 0;
+    }
+
+    void score()
+    {
+        if (p1Check == true && p2Check == false)
+        {
+            JOptionPane.showMessageDialog(null, gui.p1Label.getText().substring(0,8) + " won",
+                    "Announcement", JOptionPane.PLAIN_MESSAGE);
+            gui.p1Score += 1;
+            gui.p1ScoreLabel.setText("Score: " + gui.p1Score);
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(null, gui.p2Label.getText().substring(0,8) + " won", 
+                    "Announcement", JOptionPane.PLAIN_MESSAGE);
+            gui.p2Score += 1;
+            gui.p2ScoreLabel.setText("Score: " + gui.p2Score);
+        }
+    }
+    
+    void clear()
+    {
+        for(i = 0;i < 9;i++)
+        {
+            gui.button[i].setText("");
+            gui.button[i].setSelected(false);
+            gui.button[i].setEnabled(true);
+        }
+        turn();
+    }
+}
