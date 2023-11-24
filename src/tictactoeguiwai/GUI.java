@@ -82,7 +82,9 @@ public class GUI extends JPanel implements ActionListener
                 }
                 button[i].setEnabled(false);
                 logic.winCondition();
+                logic.isGameFinished();
                 logic.aiTurn();
+                
                 break;
             }
         }

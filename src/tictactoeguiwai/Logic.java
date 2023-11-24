@@ -44,7 +44,7 @@ public class Logic
     {
         firstTurn = !firstTurn;
         String condition = null;
-        for (i = 0; i < 10;i++)
+        for (i = 0; i < 9;i++)
         {
             switch(i)
             {
@@ -90,6 +90,7 @@ public class Logic
                     break;
             }
         }
+        
     }
 
     void score()
@@ -132,6 +133,7 @@ public class Logic
         gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
         gui.button[emptyButtonIndex].setEnabled(false);
         winCondition();
+        isGameFinished();
     }
     
     protected boolean isGameFinished()
