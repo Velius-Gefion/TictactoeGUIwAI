@@ -9,17 +9,25 @@ public class Logic
     
     boolean firstTurn, p1Check, computerCheck;
     int i, j, k;
-
-    public Logic(GUI gui) {
+    String difficulty;
+    
+    public Logic(GUI gui)
+    {
         this.gui = gui;
     }
     
-    void turn() {
+    void turn()
+    {
+        //TO DO difficulty method
+        
         firstTurn = rnd.nextBoolean();
-        if (firstTurn == true) {
+        if (firstTurn == true)
+        {
             gui.p1Label.setText("Player is X");
             gui.computerLabel.setText("Computer is O");
-        } else {
+        }
+        else
+        {
             gui.p1Label.setText("Player is O");
             gui.computerLabel.setText("Computer is X");
         }
@@ -152,28 +160,41 @@ public class Logic
     
     protected void computerMove()
     {
-        int bestScore = Integer.MIN_VALUE;
-        int bestMove = -1;
-
-        for (int move = 0; move < 9; move++)
+        
+        switch(difficulty)
         {
-            if (gui.button[move].isEnabled())
-            {
-                gui.button[move].setText("O");
-                int score = minimax(0, false);
-                gui.button[move].setText("");
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    bestMove = move;
-                }
-            }
-        }
+            case "easy":
+                int bestScore = Integer.MIN_VALUE;
+                int bestMove = -1;
 
-        gui.button[bestMove].setText("O");
-        gui.button[bestMove].setFont(gui.buttonFont);
-        gui.button[bestMove].setEnabled(false);
-        gui.turnLabel.setText("X's Turn");
+                for (int move = 0; move < 9; move++)
+                {
+                    if (gui.button[move].isEnabled())
+                    {
+                        gui.button[move].setText("O");
+                        int score = minimax(0, false);
+                        gui.button[move].setText("");
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            bestMove = move;
+                        }
+                    }
+                }
+
+                gui.button[bestMove].setText("O");
+                gui.button[bestMove].setFont(gui.buttonFont);
+                gui.button[bestMove].setEnabled(false);
+                gui.turnLabel.setText("X's Turn");
+                break;
+            case "medium":
+                //TO DO random and minimax
+                break;
+            case "hard":
+                //TO DO minimax
+                break;
+        }
+        
     }
 
     private int minimax(int i, boolean b)
