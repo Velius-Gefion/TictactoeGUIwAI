@@ -131,15 +131,51 @@ public class Logic
     }
     
     void aiTurn() {
-        int emptyButtonIndex;
-        do {
-            emptyButtonIndex = rnd.nextInt(9);
-        } while (!gui.button[emptyButtonIndex].getText().isEmpty());
+        
+        
+        switch(difficulty)
+        {
+            case "easy":
+                int emptyButtonIndex;
+                do
+                {
+                    emptyButtonIndex = rnd.nextInt(9);
+                }
+                while (!gui.button[emptyButtonIndex].getText().isEmpty());
+                
+                gui.button[emptyButtonIndex].setFont(gui.buttonFont);
+                gui.button[emptyButtonIndex].setText(gui.computerLabel.getText().substring(12));
+                gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
+                gui.button[emptyButtonIndex].setEnabled(false);
+                break;
+            case "medium":
+                break;
+                
+            case "hard":
+                int bestScore = Integer.MIN_VALUE;
+                int bestMove = -1;
+                
+                for (int move = 0; move < 9; move++)
+                {
+                    if (gui.button[move].isEnabled())
+                    {
+                        gui.button[move].setText("O");
+                        int score = minimax(0, false);
+                        gui.button[move].setText("");
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                            bestMove = move;
+                        }
+                    }
+                }
 
-        gui.button[emptyButtonIndex].setFont(gui.buttonFont);
-        gui.button[emptyButtonIndex].setText(gui.computerLabel.getText().substring(12));
-        gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
-        gui.button[emptyButtonIndex].setEnabled(false);
+                gui.button[bestMove].setFont(gui.buttonFont);
+                gui.button[bestMove].setText(gui.computerLabel.getText().substring(12));
+                gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
+                gui.button[bestMove].setEnabled(false);
+                break;
+        }
         winCondition();
         isGameFinished();
     }
@@ -157,48 +193,73 @@ public class Logic
         clear();
         return true;
     }
-    
-    protected void computerMove()
+
+    private int minimax(int depth, boolean isMaximizing)
     {
-        
-        switch(difficulty)
-        {
-            case "easy":
-                int bestScore = Integer.MIN_VALUE;
-                int bestMove = -1;
-
-                for (int move = 0; move < 9; move++)
-                {
-                    if (gui.button[move].isEnabled())
-                    {
-                        gui.button[move].setText("O");
-                        int score = minimax(0, false);
-                        gui.button[move].setText("");
-                        if (score > bestScore)
-                        {
-                            bestScore = score;
-                            bestMove = move;
-                        }
-                    }
-                }
-
-                gui.button[bestMove].setText("O");
-                gui.button[bestMove].setFont(gui.buttonFont);
-                gui.button[bestMove].setEnabled(false);
-                gui.turnLabel.setText("X's Turn");
-                break;
-            case "medium":
-                //TO DO random and minimax
-                break;
-            case "hard":
-                //TO DO minimax
-                break;
+        int result = evaluate();
+        if (result != 0) {
+            return result;
         }
-        
+
+        if (isMaximizing) {
+            int bestScore = Integer.MIN_VALUE;
+            for (int move = 0; move < 9; move++) {
+                if (gui.button[move].isEnabled()) {
+                    gui.button[move].setText("O");
+                    bestScore = Math.max(bestScore, minimax(depth + 1, !isMaximizing));
+                    gui.button[move].setText("");
+                }
+            }
+            return bestScore;
+        } else {
+            int bestScore = Integer.MAX_VALUE;
+            for (int move = 0; move < 9; move++) {
+                if (gui.button[move].isEnabled()) {
+                    gui.button[move].setText("X");
+                    bestScore = Math.min(bestScore, minimax(depth + 1, !isMaximizing));
+                    gui.button[move].setText("");
+                }
+            }
+            return bestScore;
+        }
     }
 
-    private int minimax(int i, boolean b)
-    {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Evaluate the current state of the game
+    private int evaluate() {
+        for (i = 0; i < 8; i++) {
+            String line = "";
+            switch (i) {
+                case 0:
+                    line = gui.button[0].getText() + gui.button[1].getText() + gui.button[2].getText();
+                    break;
+                case 1:
+                    line = gui.button[3].getText() + gui.button[4].getText() + gui.button[5].getText();
+                    break;
+                case 2:
+                    line = gui.button[6].getText() + gui.button[7].getText() + gui.button[8].getText();
+                    break;
+                case 3:
+                    line = gui.button[0].getText() + gui.button[3].getText() + gui.button[6].getText();
+                    break;
+                case 4:
+                    line = gui.button[1].getText() + gui.button[4].getText() + gui.button[7].getText();
+                    break;
+                case 5:
+                    line = gui.button[2].getText() + gui.button[5].getText() + gui.button[8].getText();
+                    break;
+                case 6:
+                    line = gui.button[0].getText() + gui.button[4].getText() + gui.button[8].getText();
+                    break;
+                case 7:
+                    line = gui.button[6].getText() + gui.button[4].getText() + gui.button[2].getText();
+                    break;
+            }
+            if (line.equals("XXX")) {
+                return 10;
+            } else if (line.equals("OOO")) {
+                return -10;
+            }
+        }
+        return 0; // No winner yet
     }
 }
