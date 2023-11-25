@@ -2,7 +2,6 @@ package tictactoeguiwai;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Random;
-import java.util.Stack;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
@@ -12,8 +11,10 @@ public class Logic
     GUI gui;
     Random rnd = new Random();
     
-    boolean firstTurn, p1Check, computerCheck;
-    int i, j, k;
+    protected char [][] board = new char[3][3];
+    
+    boolean firstTurn, playerCheck, computerCheck, medium;
+    int k;
     String difficulty;
     
     public Logic(GUI gui)
@@ -23,7 +24,7 @@ public class Logic
     
     void turn()
     {
-        String[] difficultyOptions = {"Easy", "Medium", "Hard"};
+        String[] difficultyOptions = {"Easy", "Medium","Hard"};
 
         JOptionPane optionPane = new JOptionPane(
                 "Select Difficulty Level",
@@ -55,12 +56,12 @@ public class Logic
         firstTurn = rnd.nextBoolean();
         if (firstTurn == true)
         {
-            gui.p1Label.setText("Player is X");
+            gui.playerLabel.setText("Player is X");
             gui.computerLabel.setText("Computer is O");
         }
         else
         {
-            gui.p1Label.setText("Player is O");
+            gui.playerLabel.setText("Player is O");
             gui.computerLabel.setText("Computer is X");
         }
 
@@ -82,64 +83,80 @@ public class Logic
     
     void winCondition()
     {
-        String condition = null;
-        for (i = 0; i < 8;i++)
+        String condition = "";
+        boolean check [] = new boolean [9];
+        for (int i = 0; i < 8;i++)
         {
             switch(i)
             {
                 case 0:
-                    condition = gui.button[0].getText() + gui.button[1].getText() + gui.button[2].getText();
+                    condition = gui.button[0][0].getText() + gui.button[0][1].getText() + gui.button[0][2].getText();
                     break;
                 case 1:
-                    condition = gui.button[3].getText() + gui.button[4].getText() + gui.button[5].getText();
+                    condition = gui.button[1][0].getText() + gui.button[1][1].getText() + gui.button[1][2].getText();
                     break;
                 case 2:
-                    condition = gui.button[6].getText() + gui.button[7].getText() + gui.button[8].getText();
+                    condition = gui.button[2][0].getText() + gui.button[2][1].getText() + gui.button[2][2].getText();
                     break;
                 case 3:
-                    condition = gui.button[0].getText() + gui.button[3].getText() + gui.button[6].getText();
+                    condition = gui.button[0][0].getText() + gui.button[1][0].getText() + gui.button[2][0].getText();
                     break;
                 case 4:
-                    condition = gui.button[1].getText() + gui.button[4].getText() + gui.button[7].getText();
+                    condition = gui.button[0][1].getText() + gui.button[1][1].getText() + gui.button[2][1].getText();
                     break;
                 case 5:
-                    condition = gui.button[2].getText() + gui.button[5].getText() + gui.button[8].getText();
+                    condition = gui.button[0][2].getText() + gui.button[1][2].getText() + gui.button[2][2].getText();
                     break;
                 case 6:
-                    condition = gui.button[0].getText() + gui.button[4].getText() + gui.button[8].getText();
+                    condition = gui.button[0][0].getText() + gui.button[1][1].getText() + gui.button[2][2].getText();
                     break;
                 case 7:
-                    condition = gui.button[6].getText() + gui.button[4].getText() + gui.button[2].getText();
+                    condition = gui.button[2][0].getText() + gui.button[1][1].getText() + gui.button[0][2].getText();
                     break;
             }
             
-            switch(condition)
+            if(condition.equals("XXX"))
             {
-                case "XXX":
-                    p1Check = gui.p1Label.getText().contains("X");
-                    computerCheck = gui.computerLabel.getText().contains("X");
-                    score(); clear();
-                    break;
-                case "OOO":
-                    p1Check = gui.p1Label.getText().contains("O");
-                    computerCheck = gui.computerLabel.getText().contains("O");
-                    score(); clear();
-                    break;
-                default:
-                    break;
+                playerCheck = gui.playerLabel.getText().contains("X");
+                computerCheck = gui.computerLabel.getText().contains("X");
+                score(); clear();
+                break;
+            }
+            else if (condition.equals("OOO"))
+            {
+                playerCheck = gui.playerLabel.getText().contains("O");
+                computerCheck = gui.computerLabel.getText().contains("O");
+                score(); clear();
+                break;
+            }
+        }   
+        for(int i = 0;i < 3; i++)
+        {
+            for(int j = 0;j < 3;j++)
+            {
+                check[j] = gui.button[i][j].getText().matches("");
+                if(check[j] == false)
+                {  
+                    k += 1;
+                    if (k == 9)
+                    {
+                        JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
+                        clear();   
+                    }
+                }    
             }
         }
-        
+        k = 0;
     }
 
     void score()
     {
-        if (p1Check == true && computerCheck == false)
+        if (playerCheck == true && computerCheck == false)
         {
-            JOptionPane.showMessageDialog(null, gui.p1Label.getText().substring(0,6) + " won",
+            JOptionPane.showMessageDialog(null, gui.playerLabel.getText().substring(0,6) + " won",
                     "Announcement", JOptionPane.PLAIN_MESSAGE);
-            gui.p1Score += 1;
-            gui.p1ScoreLabel.setText("Score: " + gui.p1Score);
+            gui.playerScore += 1;
+            gui.playerScoreLabel.setText("Score: " + gui.playerScore);
         }
         else
         {
@@ -152,11 +169,14 @@ public class Logic
     
     void clear()
     {
-        for(i = 0;i < 9;i++)
+        for(int i = 0;i < 3;i++)
         {
-            gui.button[i].setText("");
-            gui.button[i].setSelected(false);
-            gui.button[i].setEnabled(true);
+            for(int j = 0;j < 3 ;j++)
+            {
+                gui.button[i][j].setText("");
+                gui.button[i][j].setSelected(false);
+                gui.button[i][j].setEnabled(true);
+            }
         }
         turn();
     }
@@ -166,105 +186,117 @@ public class Logic
         switch(difficulty)
         {
             case "Easy":
-                int emptyButtonIndex;
-                do
-                {
-                    emptyButtonIndex = rnd.nextInt(9);
-                }
-                while (!gui.button[emptyButtonIndex].getText().isEmpty());
-                
-                gui.button[emptyButtonIndex].setFont(gui.buttonFont);
-                gui.button[emptyButtonIndex].setText(gui.computerLabel.getText().substring(12));
-                gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
-                gui.button[emptyButtonIndex].setEnabled(false);
+                easyAI();
                 break;
             case "Medium":
-                break;
-                
-            case "Hard":
-                int bestScore = Integer.MIN_VALUE;
-                int bestMove = -1;
-                int alpha = Integer.MIN_VALUE;
-                int beta = Integer.MAX_VALUE;
-                
-                for (int move = 0; move < 9; move++)
+                medium = rnd.nextBoolean();
+                if (medium == true)
                 {
-                    if (gui.button[move].isEnabled())
-                    {
-                        gui.button[move].setText(gui.computerLabel.getText().substring(12));
-                        int score = minimax(0, alpha, beta, false);
-                        gui.button[move].setText("");
-                        if (score > bestScore)
-                        {
-                            bestScore = score;
-                            bestMove = move;
-                        }
-                    }
-                    alpha = Math.max(alpha, bestScore);
+                    easyAI();
                 }
-
-                gui.button[bestMove].setFont(gui.buttonFont);
-                gui.button[bestMove].setText(gui.computerLabel.getText().substring(12));
-                gui.turnLabel.setText(gui.p1Label.getText().substring(10) + "'s Turn");
-                gui.button[bestMove].setEnabled(false);
+                else
+                {
+                    hardAI();
+                }
+                break;
+            case "Hard":
+                hardAI();
                 break;
         }
         winCondition();
-        isGameFinished();
+    }
+    
+    void easyAI()
+    {
+        int emptyButtonRow, emptyButtonCol;
+        do
+        {
+            emptyButtonRow = rnd.nextInt(3);
+            emptyButtonCol = rnd.nextInt(3);
+        }
+        while (!gui.button[emptyButtonRow][emptyButtonCol].getText().isEmpty());
+        gui.button[emptyButtonRow][emptyButtonCol].setFont(gui.buttonFont);
+        gui.button[emptyButtonRow][emptyButtonCol].setText(gui.computerLabel.getText().substring(12));
+        gui.turnLabel.setText(gui.playerLabel.getText().substring(10) + "'s Turn");
+        gui.button[emptyButtonRow][emptyButtonCol].setEnabled(false);
+    }
+    
+    void hardAI()
+    {
+        int[] bestMove = minimax(board, gui.computerLabel.getText().charAt(12));
+                
+        gui.button[bestMove[0]][bestMove[1]].setFont(gui.buttonFont);
+        gui.button[bestMove[0]][bestMove[1]].setText(gui.computerLabel.getText().substring(12));
+        board[bestMove[0]][bestMove[1]] = gui.computerLabel.getText().charAt(12);
+        gui.turnLabel.setText(gui.playerLabel.getText().substring(10) + "'s Turn");
+        gui.button[bestMove[0]][bestMove[1]].setEnabled(false);
     }
     
     protected boolean isGameFinished()
     {
-        for (int j = 0; j < 9; j++)
+        for (int i = 0; i < 3; i++)
         {
-            if (gui.button[j].isEnabled())
+            for(int j = 0; j < 3;j++)
             {
-                return false;
+                if (board[i][j] == ' ')
+                {
+                    return false;
+                }
             }
         }
-        JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
-        clear();
         return true;
     }
 
-    private static final int MAX_DEPTH = 4420;
-
-    private int minimax(int depth, int alpha, int beta, boolean isMaximizing)
-    {
-        int result = evaluate();
-        if (result != 0 || depth == MAX_DEPTH)
-        {
-            return result;
+    private int[] minimax(char[][] board, char player) {
+        int[] result = new int[]{-1, -1};
+        int bestScore = (player == gui.computerLabel.getText().charAt(12)) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == ' ') {
+                    board[i][j] = player;
+                    int score = minimaxHelper(board, 0, false);
+                    board[i][j] = ' ';
+                    if ((player == gui.computerLabel.getText().charAt(12) && score > bestScore) || (player == gui.playerLabel.getText().charAt(10) && score < bestScore)) {
+                        bestScore = score;
+                        result[0] = i;
+                        result[1] = j;
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    private int minimaxHelper(char[][] board, int depth, boolean isMaximizing) {
+        if (evaluate(gui.playerLabel.getText().charAt(10))) {
+            return -1;
+        } else if (evaluate(gui.computerLabel.getText().charAt(12))) {
+            return 1;
+        } else if (isGameFinished()) {
+            return 0;
         }
 
         if (isMaximizing) {
             int bestScore = Integer.MIN_VALUE;
-            for (int move = 0; move < 9; move++) {
-                if (gui.button[move].isEnabled()) {
-                    gui.button[move].setText(gui.computerLabel.getText().substring(12));
-                    bestScore = Math.max(bestScore, minimax(depth + 1, alpha, beta, !isMaximizing));
-                    gui.button[move].setText("");
-
-                    alpha = Math.max(alpha, bestScore);
-
-                    if (beta <= alpha) {
-                        break; // Beta cut-off
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == ' ') {
+                        board[i][j] = gui.computerLabel.getText().charAt(12);
+                        bestScore = Math.max(bestScore, minimaxHelper(board, depth + 1, false));
+                        board[i][j] = ' ';
                     }
                 }
             }
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
-            for (int move = 0; move < 9; move++) {
-                if (gui.button[move].isEnabled()) {
-                    gui.button[move].setText(gui.p1Label.getText().substring(10));
-                    bestScore = Math.min(bestScore, minimax(depth + 1, alpha, beta, !isMaximizing));
-                    gui.button[move].setText("");
-
-                    beta = Math.min(beta, bestScore);
-
-                    if (beta <= alpha) {
-                        break; // Alpha cut-off
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    if (board[i][j] == ' ') {
+                        board[i][j] = gui.playerLabel.getText().charAt(10);
+                        bestScore = Math.min(bestScore, minimaxHelper(board, depth + 1, true));
+                        board[i][j] = ' ';
                     }
                 }
             }
@@ -272,32 +304,44 @@ public class Logic
         }
     }
     
-    private int evaluate()
+    private boolean evaluate(char symbol)
     {
+        String line = "";
         for (int i = 0; i < 8; i++)
-        {
-            int row1 = WINNING_COMBINATIONS[i][0];
-            int row2 = WINNING_COMBINATIONS[i][1];
-            int row3 = WINNING_COMBINATIONS[i][2];
-
-            String line = gui.button[row1].getText() + gui.button[row2].getText() + gui.button[row3].getText();
-
-            if (line.equals("XXX"))
+        {   
+            switch(i)
             {
-                return 10;
-            } else if (line.equals("OOO"))
+                case 0:
+                    line = gui.button[0][0].getText() + gui.button[0][1].getText() + gui.button[0][2].getText();
+                    break;
+                case 1:
+                    line = gui.button[1][0].getText() + gui.button[1][1].getText() + gui.button[1][2].getText();
+                    break;
+                case 2:
+                    line = gui.button[2][0].getText() + gui.button[2][1].getText() + gui.button[2][2].getText();
+                    break;
+                case 3:
+                    line = gui.button[0][0].getText() + gui.button[1][0].getText() + gui.button[2][0].getText();
+                    break;
+                case 4:
+                    line = gui.button[0][1].getText() + gui.button[1][1].getText() + gui.button[2][1].getText();
+                    break;
+                case 5:
+                    line = gui.button[0][2].getText() + gui.button[1][2].getText() + gui.button[2][2].getText();
+                    break;
+                case 6:
+                    line = gui.button[0][0].getText() + gui.button[1][1].getText() + gui.button[2][2].getText();
+                    break;
+                case 7:
+                    line = gui.button[2][0].getText() + gui.button[1][1].getText() + gui.button[0][2].getText();
+                    break;
+            }
+
+            if (line.equals(symbol))
             {
-                return -10;
+                return true;
             }
         }
-        return 0;
+        return false;
     }
-
-    private static final int[][] WINNING_COMBINATIONS =
-    {
-        {0, 1, 2}, {3, 4, 5}, {6, 7, 8},
-        {0, 3, 6}, {1, 4, 7},{2, 5, 8},
-        {0, 4, 8}, {6, 4, 2}
-    };
-
 }

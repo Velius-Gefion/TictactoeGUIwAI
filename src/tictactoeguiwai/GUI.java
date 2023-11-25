@@ -14,23 +14,21 @@ public class GUI extends JPanel implements ActionListener
     
     Font buttonFont = new Font(null,Font.PLAIN,50), 
          labelFont = new Font(null,Font.PLAIN,15);
-    JLabel p1Label, computerLabel, p1ScoreLabel, computerScoreLabel, turnLabel;
-    JToggleButton[] button = new JToggleButton[9];
-    boolean[] check = new boolean[9];
-    int i, j, k, x, y, p1Score, computerScore;
-    
+    JLabel playerLabel, computerLabel, playerScoreLabel, computerScoreLabel, turnLabel;
+    JToggleButton[][] button = new JToggleButton[3][3];
+    int i, j, x, y, playerScore, computerScore;
     
     GUI(TictactoeGUIwAI tictactoe)
     {
         this.tictactoe = tictactoe;
         
         setLayout(null);
-        add(p1Label = new JLabel("Player 1"));
-        add(p1ScoreLabel = new JLabel("Score: "));
-        p1Label.setFont(labelFont);
-        p1ScoreLabel.setFont(labelFont);
-        p1Label.setBounds(10,10,100,15);
-        p1ScoreLabel.setBounds(230,10,100,15);
+        add(playerLabel = new JLabel("Player 1"));
+        add(playerScoreLabel = new JLabel("Score: "));
+        playerLabel.setFont(labelFont);
+        playerScoreLabel.setFont(labelFont);
+        playerLabel.setBounds(10,10,100,15);
+        playerScoreLabel.setBounds(230,10,100,15);
         
         add(computerLabel = new JLabel("Computer"));
         add(computerScoreLabel = new JLabel("Score: "));
@@ -44,48 +42,43 @@ public class GUI extends JPanel implements ActionListener
         turnLabel.setBounds(140,25,100,15);
         
         x = 10; y = 60;
-        for(i = 0;i < 9;i++)
+        for(i = 0;i < 3;i++)
         {
-            j = i;
-            add(button[i] = new JToggleButton());
-            button[i].setBounds(x,y,100,100);
-            button[i].addActionListener(this);
-            
-            x += 110;
-            if ((j + 1) % 3 == 0)
+            for(j = 0; j < 3;j++)
             {
-                x = 10;
-                y += 110;
+                add(button[i][j] = new JToggleButton());
+                button[i][j].setBounds(x,y,100,100);
+                button[i][j].addActionListener(this);
+                logic.board[i][j] = ' ';
+                
+                x += 110;
             }
+            x = 10;
+            y += 110;
         }
         logic.turn();
-        
     }
-
+    
+    
+    
     @Override
     public void actionPerformed(ActionEvent e)
     {   
-        for (i = 0; i < 9; i++)
+        for (i = 0; i < 3; i++)
         {
-            if (e.getSource() == button[i])
-            {
-                button[i].setFont(buttonFont);
-                if(p1Label.getText().substring(10).matches("X"))
+            for (j = 0;j < 3;j++)
+            {   
+                if (e.getSource() == button[i][j])
                 {
-                    button[i].setText("X");
-                    turnLabel.setText("O's Turn");
+                    button[i][j].setFont(buttonFont);
+                    button[i][j].setText(playerLabel.getText().substring(10));
+                    logic.board[i][j] = playerLabel.getText().charAt(10);
+                    turnLabel.setText(computerLabel.getText().substring(12) + "'s Turn");
+                    button[i][j].setEnabled(false);
+                    logic.winCondition();
+                    logic.aiTurn();
+                    break;
                 }
-                else
-                {
-                    button[i].setText("O");
-                    turnLabel.setText("X's Turn");
-                }
-                button[i].setEnabled(false);
-                logic.winCondition();
-                logic.isGameFinished();
-                logic.aiTurn();
-                
-                break;
             }
         }
     }
