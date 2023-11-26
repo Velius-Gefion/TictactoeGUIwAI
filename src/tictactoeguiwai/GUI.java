@@ -49,7 +49,6 @@ public class GUI extends JPanel implements ActionListener
                 add(button[i][j] = new JToggleButton());
                 button[i][j].setBounds(x,y,100,100);
                 button[i][j].addActionListener(this);
-                logic.board[i][j] = ' ';
                 
                 x += 110;
             }

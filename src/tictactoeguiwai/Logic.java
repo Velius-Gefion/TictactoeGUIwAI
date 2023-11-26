@@ -24,6 +24,17 @@ public class Logic
     
     void turn()
     {
+        for(int i = 0;i < 3;i++)
+        {
+            for(int j = 0;j < 3 ;j++)
+            {
+                board[i][j] = ' ';
+                gui.button[i][j].setText("");
+                gui.button[i][j].setSelected(false);
+                gui.button[i][j].setEnabled(true);
+            }
+        }
+        
         String[] difficultyOptions = {"Easy", "Medium","Hard"};
 
         JOptionPane optionPane = new JOptionPane(
@@ -54,18 +65,9 @@ public class Logic
         }
         
         firstTurn = rnd.nextBoolean();
-        if (firstTurn == true)
-        {
-            gui.playerLabel.setText("Player is X");
-            gui.computerLabel.setText("Computer is O");
-        }
-        else
-        {
-            gui.playerLabel.setText("Player is O");
-            gui.computerLabel.setText("Computer is X");
-        }
+        gui.playerLabel.setText("Player is " + (firstTurn ? "X" : "O"));
+        gui.computerLabel.setText("Computer is " + (firstTurn ? "O" : "X"));
 
-        firstTurn = rnd.nextBoolean();
         if (firstTurn == true)
         {
             gui.turnLabel.setText("X's Turn");
@@ -119,14 +121,14 @@ public class Logic
             {
                 playerCheck = gui.playerLabel.getText().contains("X");
                 computerCheck = gui.computerLabel.getText().contains("X");
-                score(); clear();
+                score(); turn();
                 break;
             }
             else if (condition.equals("OOO"))
             {
                 playerCheck = gui.playerLabel.getText().contains("O");
                 computerCheck = gui.computerLabel.getText().contains("O");
-                score(); clear();
+                score(); turn();
                 break;
             }
         }   
@@ -141,7 +143,7 @@ public class Logic
                     if (k == 9)
                     {
                         JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
-                        clear();
+                        turn();
                     }
                 }    
             }
@@ -165,21 +167,6 @@ public class Logic
             gui.computerScore += 1;
             gui.computerScoreLabel.setText("Score: " + gui.computerScore);
         }
-    }
-    
-    void clear()
-    {
-        for(int i = 0;i < 3;i++)
-        {
-            for(int j = 0;j < 3 ;j++)
-            {
-                board[i][j] = ' ';
-                gui.button[i][j].setText("");
-                gui.button[i][j].setSelected(false);
-                gui.button[i][j].setEnabled(true);
-            }
-        }
-        turn();
     }
     
     void aiTurn()
@@ -227,15 +214,11 @@ public class Logic
     {
         int[] bestMove = minimax(board, gui.computerLabel.getText().charAt(12));
         
-        System.out.println(bestMove[0] + " " + bestMove[1]);
-        
         gui.button[bestMove[0]][bestMove[1]].setFont(gui.buttonFont);
         gui.button[bestMove[0]][bestMove[1]].setText(gui.computerLabel.getText().substring(12));
         board[bestMove[0]][bestMove[1]] = gui.computerLabel.getText().charAt(12);
         gui.turnLabel.setText(gui.playerLabel.getText().substring(10) + "'s Turn");
         gui.button[bestMove[0]][bestMove[1]].setEnabled(false);
-
-        //winCondition();
     }
     
     protected boolean isGameFinished()
@@ -253,16 +236,40 @@ public class Logic
         return true;
     }
 
+    private boolean hasContestantWon(char symbol) {
+        for (int i = 0; i < 3; i++) {
+            if ((board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) ||
+                    (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)) {
+                return true;
+            }
+        }
+
+        return (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol);
+    }
+
+    private boolean isBoardFull() {
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (board[i][j] == ' ') {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private int[] minimax(char[][] board, char player) {
         int[] result = new int[]{-1, -1};
         int bestScore = (player == gui.computerLabel.getText().charAt(12)) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 if (board[i][j] == ' ') {
                     board[i][j] = player;
                     int score = minimaxHelper(board, 0, false);
                     board[i][j] = ' ';
-                    
+
                     if ((player == gui.computerLabel.getText().charAt(12) && score > bestScore) || (player == gui.playerLabel.getText().charAt(10) && score < bestScore)) {
                         bestScore = score;
                         result[0] = i;
@@ -271,26 +278,25 @@ public class Logic
                 }
             }
         }
-        
+
         return result;
     }
-    
+
     private int minimaxHelper(char[][] board, int depth, boolean isMaximizing) {
-        if (evaluate(gui.playerLabel.getText().charAt(10))) {
+        if (hasContestantWon(gui.playerLabel.getText().charAt(10))) {
             return -1;
-        } else if (evaluate(gui.computerLabel.getText().charAt(12))) {
+        } else if (hasContestantWon(gui.computerLabel.getText().charAt(12))) {
             return 1;
-        } else if (isGameFinished()) {
+        } else if (isBoardFull()) {
             return 0;
         }
-        
+
         if (isMaximizing) {
             int bestScore = Integer.MIN_VALUE;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == ' ') {
                         board[i][j] = gui.computerLabel.getText().charAt(12);
-                        System.out.println("Depth: " + depth + ", Max: " + isMaximizing + ", Score: " + bestScore);
                         bestScore = Math.max(bestScore, minimaxHelper(board, depth + 1, false));
                         board[i][j] = ' ';
                     }
@@ -302,8 +308,7 @@ public class Logic
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == ' ') {
-                        board[i][j] = gui.playerLabel.getText().charAt(10);       
-                        System.out.println("Depth: " + depth + ", Max: " + isMaximizing + ", Score: " + bestScore);
+                        board[i][j] = gui.playerLabel.getText().charAt(10);
                         bestScore = Math.min(bestScore, minimaxHelper(board, depth + 1, true));
                         board[i][j] = ' ';
                     }
@@ -311,46 +316,5 @@ public class Logic
             }
             return bestScore;
         }
-    }
-    
-    private boolean evaluate(char symbol)
-    {
-        String line = "";
-        for (int i = 0; i < 8; i++)
-        {   
-            switch(i)
-            {
-                case 0:
-                    line = gui.button[0][0].getText() + gui.button[0][1].getText() + gui.button[0][2].getText();
-                    break;
-                case 1:
-                    line = gui.button[1][0].getText() + gui.button[1][1].getText() + gui.button[1][2].getText();
-                    break;
-                case 2:
-                    line = gui.button[2][0].getText() + gui.button[2][1].getText() + gui.button[2][2].getText();
-                    break;
-                case 3:
-                    line = gui.button[0][0].getText() + gui.button[1][0].getText() + gui.button[2][0].getText();
-                    break;
-                case 4:
-                    line = gui.button[0][1].getText() + gui.button[1][1].getText() + gui.button[2][1].getText();
-                    break;
-                case 5:
-                    line = gui.button[0][2].getText() + gui.button[1][2].getText() + gui.button[2][2].getText();
-                    break;
-                case 6:
-                    line = gui.button[0][0].getText() + gui.button[1][1].getText() + gui.button[2][2].getText();
-                    break;
-                case 7:
-                    line = gui.button[2][0].getText() + gui.button[1][1].getText() + gui.button[0][2].getText();
-                    break;
-            }
-
-            if (line.equals(String.valueOf(symbol).repeat(3)))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }
