@@ -52,7 +52,11 @@ public class Logic
         dialog.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                JOptionPane.showMessageDialog(dialog, "Please select a difficulty level.");
+                int a = JOptionPane.showConfirmDialog(dialog, "Do you want to exit the game?", "WARNING", JOptionPane.YES_NO_OPTION);
+                if(a == JOptionPane.YES_OPTION)
+                {
+                    System.exit(0);
+                }
             }
         });
 
