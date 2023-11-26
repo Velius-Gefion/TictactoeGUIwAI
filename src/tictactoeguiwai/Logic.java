@@ -141,7 +141,7 @@ public class Logic
                     if (k == 9)
                     {
                         JOptionPane.showMessageDialog(null, "Draw", "Announcement", JOptionPane.PLAIN_MESSAGE);
-                        clear();   
+                        clear();
                     }
                 }    
             }
@@ -173,6 +173,7 @@ public class Logic
         {
             for(int j = 0;j < 3 ;j++)
             {
+                board[i][j] = ' ';
                 gui.button[i][j].setText("");
                 gui.button[i][j].setSelected(false);
                 gui.button[i][j].setEnabled(true);
@@ -217,6 +218,7 @@ public class Logic
         while (!gui.button[emptyButtonRow][emptyButtonCol].getText().isEmpty());
         gui.button[emptyButtonRow][emptyButtonCol].setFont(gui.buttonFont);
         gui.button[emptyButtonRow][emptyButtonCol].setText(gui.computerLabel.getText().substring(12));
+        board[emptyButtonRow][emptyButtonCol] = gui.computerLabel.getText().charAt(12);
         gui.turnLabel.setText(gui.playerLabel.getText().substring(10) + "'s Turn");
         gui.button[emptyButtonRow][emptyButtonCol].setEnabled(false);
     }
@@ -224,12 +226,16 @@ public class Logic
     void hardAI()
     {
         int[] bestMove = minimax(board, gui.computerLabel.getText().charAt(12));
-                
+        
+        System.out.println(bestMove[0] + " " + bestMove[1]);
+        
         gui.button[bestMove[0]][bestMove[1]].setFont(gui.buttonFont);
         gui.button[bestMove[0]][bestMove[1]].setText(gui.computerLabel.getText().substring(12));
         board[bestMove[0]][bestMove[1]] = gui.computerLabel.getText().charAt(12);
         gui.turnLabel.setText(gui.playerLabel.getText().substring(10) + "'s Turn");
         gui.button[bestMove[0]][bestMove[1]].setEnabled(false);
+
+        //winCondition();
     }
     
     protected boolean isGameFinished()
@@ -256,6 +262,7 @@ public class Logic
                     board[i][j] = player;
                     int score = minimaxHelper(board, 0, false);
                     board[i][j] = ' ';
+                    
                     if ((player == gui.computerLabel.getText().charAt(12) && score > bestScore) || (player == gui.playerLabel.getText().charAt(10) && score < bestScore)) {
                         bestScore = score;
                         result[0] = i;
@@ -276,13 +283,14 @@ public class Logic
         } else if (isGameFinished()) {
             return 0;
         }
-
+        
         if (isMaximizing) {
             int bestScore = Integer.MIN_VALUE;
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == ' ') {
                         board[i][j] = gui.computerLabel.getText().charAt(12);
+                        System.out.println("Depth: " + depth + ", Max: " + isMaximizing + ", Score: " + bestScore);
                         bestScore = Math.max(bestScore, minimaxHelper(board, depth + 1, false));
                         board[i][j] = ' ';
                     }
@@ -294,7 +302,8 @@ public class Logic
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     if (board[i][j] == ' ') {
-                        board[i][j] = gui.playerLabel.getText().charAt(10);
+                        board[i][j] = gui.playerLabel.getText().charAt(10);       
+                        System.out.println("Depth: " + depth + ", Max: " + isMaximizing + ", Score: " + bestScore);
                         bestScore = Math.min(bestScore, minimaxHelper(board, depth + 1, true));
                         board[i][j] = ' ';
                     }
@@ -337,7 +346,7 @@ public class Logic
                     break;
             }
 
-            if (line.equals(symbol))
+            if (line.equals(String.valueOf(symbol).repeat(3)))
             {
                 return true;
             }
